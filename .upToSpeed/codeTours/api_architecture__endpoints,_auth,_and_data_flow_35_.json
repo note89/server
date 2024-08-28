@@ -1,0 +1,116 @@
+{
+    "title": "API Architecture: Endpoints, Auth, and Data Flow",
+    "id": "wFhpFJa1PEH+TIcoBecOrCkvYRJbOateNqeER3vnI2w=",
+    "steps": [
+        {
+            "type": "textOnly",
+            "description": "Welcome to the exploration of the API and application package in the Gotify server. This tour will guide you through the core functionality, API endpoints, authentication mechanisms, and database interactions. As a backend developer, understanding these components will help you design effective APIs and integrate with the frontend seamlessly.",
+            "title": "",
+            "id": "554"
+        },
+        {
+            "type": "revealFiles",
+            "files": ["api/message.go"],
+            "description": "Let's begin by examining the MessageAPI struct, which is a core component of the Gotify server. This struct handles message-related operations and interacts with the database and notifier.",
+            "title": "",
+            "id": "565"
+        },
+        {
+            "type": "highlight",
+            "description": "The MessageDatabase interface defines the contract for database operations related to messages. This abstraction allows for easy testing and potential database changes in the future.",
+            "file": "api/message.go",
+            "highlight": [{ "start": 17, "end": 28 }],
+            "title": "",
+            "id": "566"
+        },
+        {
+            "type": "highlight",
+            "description": "Let's look at the GetMessages method, which retrieves messages for a user. Notice how it uses pagination to efficiently handle large numbers of messages.",
+            "file": "api/message.go",
+            "highlight": [{ "start": 89, "end": 99 }],
+            "title": "",
+            "id": "567"
+        },
+        {
+            "type": "highlight",
+            "description": "The CreateMessage method demonstrates how to create a new message. Pay attention to how it interacts with the database and notifier components.",
+            "file": "api/message.go",
+            "highlight": [{ "start": 364, "end": 389 }],
+            "title": "",
+            "id": "568"
+        },
+        {
+            "type": "highlight",
+            "description": "These helper functions, toInternalMessage and toExternalMessage, show how the API transforms message data between internal and external representations.",
+            "file": "api/message.go",
+            "highlight": [{ "start": 391, "end": 430 }],
+            "title": "",
+            "id": "569"
+        },
+        {
+            "type": "highlight",
+            "description": "Here's the GetMessages function, which retrieves messages for a user. It uses pagination to efficiently handle large numbers of messages. Notice how it leverages the gin framework for routing and parameter handling.",
+            "file": "api/message.go",
+            "highlight": [{ "start": 89, "end": 99 }],
+            "title": "",
+            "id": "556"
+        },
+        {
+            "type": "highlight",
+            "description": "API endpoints are defined using Swagger annotations. This CreateMessage function demonstrates how to document an endpoint, including its parameters, responses, and security requirements.",
+            "file": "api/message.go",
+            "highlight": [{ "start": 330, "end": 363 }],
+            "title": "",
+            "id": "557"
+        },
+        {
+            "type": "revealFiles",
+            "files": ["api/application.go"],
+            "description": "The ApplicationAPI struct is crucial for frontend-backend interaction in Gotify. It defines RESTful endpoints that the frontend uses to manage applications. For example, the CreateApplication method (line 86) handles POST requests to create new apps, while GetApplications (line 129) serves GET requests to list apps. These endpoints return JSON responses, making it easy for the frontend to consume the data. As a backend developer, understanding this structure will help you design APIs that meet frontend needs effectively. Notice how each method is documented with Swagger annotations, providing clear specifications for frontend developers.",
+            "title": "",
+            "id": "558"
+        },
+        {
+            "type": "revealFiles",
+            "files": ["auth/authentication.go"],
+            "description": "The Auth struct provides authentication middleware for the Gotify server. It includes methods for requiring different levels of authentication, such as admin, client, and application token. This flexible approach allows for fine-grained access control across different API endpoints.",
+            "title": "",
+            "id": "559"
+        },
+        {
+            "type": "highlight",
+            "description": "The RequireApplicationToken method is a crucial part of Gotify's authentication system. It's used as middleware for API endpoints that require application-level access. Here's how it works in practice:\n\n1. When applied to an endpoint, it intercepts incoming requests.\n2. It checks for a valid application token in the request headers or query parameters.\n3. If a valid token is found, it updates the 'last used' timestamp (if necessary).\n4. It then allows the request to proceed to the actual API handler.\n\nThis method is part of a broader authentication strategy in Gotify. Different endpoints may use RequireClient, RequireAdmin, or this RequireApplicationToken middleware, depending on the level of access required. As a backend developer, you'll find this pattern useful for securing your APIs and managing different levels of access control.",
+            "file": "auth/authentication.go",
+            "highlight": [{ "start": 77, "end": 96 }],
+            "title": "",
+            "id": "560"
+        },
+        {
+            "type": "revealFiles",
+            "files": ["database/database.go"],
+            "description": "The GormDatabase struct is the main interface for database operations in Gotify. It uses the GORM ORM to interact with the database, providing a layer of abstraction over raw SQL queries. This design makes it easier to switch database backends if needed in the future.",
+            "title": "",
+            "id": "561"
+        },
+        {
+            "type": "highlight",
+            "description": "Let's explore some key database operations that support frontend needs. The GetMessagesByUserSince method is a prime example of how the backend retrieves and formats data for the frontend:\n\n1. Pagination: The 'limit' parameter allows the frontend to request a specific number of messages.\n2. Sorting: Messages are ordered by ID in descending order, typically showing the newest messages first.\n3. Filtering: The 'since' parameter enables the frontend to implement infinite scrolling or load more features.\n4. Joins: It joins the applications table to ensure the user only sees their own messages.\n\nThis method, along with others like GetApplicationsByUser or GetClientsByUser, forms the backbone of data retrieval for the frontend. When designing new endpoints, consider how the frontend will consume and display the data, and structure your queries accordingly.",
+            "file": "database/message.go",
+            "highlight": [{ "start": 37, "end": 51 }],
+            "title": "",
+            "id": "562"
+        },
+        {
+            "type": "textOnly",
+            "description": "The Gotify server's architecture is built around the interaction between the API, authentication, and database components. The API layer (e.g., MessageAPI, ApplicationAPI) defines the endpoints and business logic. The authentication layer (Auth) ensures that requests are properly authenticated. The database layer (GormDatabase) handles data persistence and retrieval. This separation of concerns allows for a modular and maintainable codebase.",
+            "title": "",
+            "id": "563"
+        },
+        {
+            "type": "textOnly",
+            "description": "You've now explored the core components of the Gotify server's API and application package. You've seen how API endpoints are defined and documented, how authentication is handled, and how database operations are abstracted. This understanding will help you design and implement new features, as well as collaborate effectively with the frontend team. Remember that the principles of separation of concerns and abstraction used here can be applied to other parts of the system as well.",
+            "title": "",
+            "id": "564"
+        }
+    ]
+}
